@@ -92,17 +92,80 @@ public:
 
 	virtual int getdiscount_rule() const = 0;
 
-	virtual bool operator==(const Product &r_product) = 0;
+	bool operator==(const Product &r_product)
+	{
+		return this->getname() == r_product.getname()
+			   && this->getprice() == r_product.getprice()
+			   && this->getdiscount() == r_product.getdiscount()
+			   && this->getdiscount_rule() == r_product.getdiscount_rule();
+	}
 
-	virtual bool operator!=(const Product &r_product) = 0;
+	bool operator!=(const Product &r_product)
+	{ return !(*this == r_product); }
 
-	virtual void operator+(const Product &r_product) = 0;
+	void operator+(const Product &r_product)
+	{
+		try
+		{
+			if (*this != r_product)
+				throw runtime_error("You can't add two different product");
+			else
+			{
+				this->setquantity(this->getquantity() + r_product.getquantity());
+			}
+		}
+		catch (runtime_error &err)
+		{
+			if (this->getname() != r_product.getname())
+				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
+			if (this->getprice() != r_product.getprice())
+				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
+			if (this->getdiscount() != r_product.getdiscount())
+				cerr << "Different discount rule: " << this->getdiscount() << "\t"
+					 << r_product.getdiscount() << endl;
+			if (this->getdiscount_rule() != r_product.getdiscount_rule())
+				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
+					 << r_product.getdiscount_rule() << endl;
+			terminate();
+		}
+	}
 
-	virtual void operator+(int quantity) = 0;
+	void operator+(int quantity)
+	{
+		this->setquantity(this->getquantity() + quantity);
+	}
 
-	virtual void operator-(const Product &r_product) = 0;
+	void operator-(const Product &r_product)
+	{
+		try
+		{
+			if (*this != r_product)
+				throw runtime_error("You can't add two different product");
+			else
+			{
+				this->setquantity(this->getquantity() - r_product.getquantity());
+			}
+		}
+		catch (runtime_error &err)
+		{
+			if (this->getname() != r_product.getname())
+				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
+			if (this->getprice() != r_product.getprice())
+				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
+			if (this->getdiscount() != r_product.getdiscount())
+				cerr << "Different discount rule: " << this->getdiscount() << "\t"
+					 << r_product.getdiscount() << endl;
+			if (this->getdiscount_rule() != r_product.getdiscount_rule())
+				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
+					 << r_product.getdiscount_rule() << endl;
+			terminate();
+		}
+	}
 
-	virtual void operator-(int quantity) = 0;
+	void operator-(int quantity)
+	{
+		this->setquantity(this->getquantity() - quantity);
+	}
 
 };
 
@@ -195,80 +258,7 @@ public:
 	static int getdicount_rule2()
 	{ return Cake_Discount::getdiscount_rule2(); }
 
-	bool operator==(const Product &r_product) override
-	{
-		return this->getname() == r_product.getname()
-			   && this->getprice() == r_product.getprice()
-			   && this->getdiscount() == r_product.getdiscount()
-			   && this->getdiscount_rule() == dynamic_cast<const Cake &>(r_product).getdiscount_rule();
-	}
 
-	bool operator!=(const Product &r_product) override
-	{ return !(*this == r_product); }
-
-	void operator+(const Product &r_product) override
-	{
-		try
-		{
-			if (*this != r_product)
-				throw runtime_error("You can't add two different product");
-			else
-			{
-				this->setquantity(this->getquantity() + r_product.getquantity());
-			}
-		}
-		catch (runtime_error &err)
-		{
-			if (this->getname() != r_product.getname())
-				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
-			if (this->getprice() != r_product.getprice())
-				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
-			if (this->getdiscount() != r_product.getdiscount())
-				cerr << "Different discount rule: " << this->getdiscount() << "\t"
-					 << r_product.getdiscount() << endl;
-			if (this->getdiscount_rule() != dynamic_cast<const Cake &>(r_product).getdiscount_rule())
-				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
-					 << dynamic_cast<const Cake &>(r_product).getdiscount_rule() << endl;
-			terminate();
-		}
-	}
-
-	void operator+(int quantity) override
-	{
-		this->setquantity(this->getquantity() + quantity);
-	}
-
-	void operator-(const Product &r_product) override
-	{
-		try
-		{
-			if (*this != r_product)
-				throw runtime_error("You can't add two different product");
-			else
-			{
-				this->setquantity(this->getquantity() - r_product.getquantity());
-			}
-		}
-		catch (runtime_error &err)
-		{
-			if (this->getname() != r_product.getname())
-				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
-			if (this->getprice() != r_product.getprice())
-				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
-			if (this->getdiscount() != r_product.getdiscount())
-				cerr << "Different discount rule: " << this->getdiscount() << "\t"
-					 << r_product.getdiscount() << endl;
-			if (this->getdiscount_rule() != dynamic_cast<const Cake &>(r_product).getdiscount_rule())
-				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
-					 << dynamic_cast<const Cake &>(r_product).getdiscount_rule() << endl;
-			terminate();
-		}
-	}
-
-	void operator-(int quantity) override
-	{
-		this->setquantity(this->getquantity() - quantity);
-	}
 };
 
 class Cookie final : public Product
@@ -309,80 +299,6 @@ public:
 	static int getdicount_rule2()
 	{ return Cake_Discount::getdiscount_rule2(); }
 
-	bool operator==(const Product &r_product) override
-	{
-		return this->getname() == r_product.getname()
-			   && this->getprice() == r_product.getprice()
-			   && this->getdiscount() == r_product.getdiscount()
-			   && this->getdiscount_rule() == dynamic_cast<const Cookie &>(r_product).getdiscount_rule();
-	}
-
-	bool operator!=(const Product &r_product) override
-	{ return !(*this == r_product); }
-
-	void operator+(const Product &r_product) override
-	{
-		try
-		{
-			if (*this != r_product)
-				throw runtime_error("You can't add two different product");
-			else
-			{
-				this->setquantity(this->getquantity() + r_product.getquantity());
-			}
-		}
-		catch (runtime_error &err)
-		{
-			if (this->getname() != r_product.getname())
-				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
-			if (this->getprice() != r_product.getprice())
-				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
-			if (this->getdiscount() != r_product.getdiscount())
-				cerr << "Different discount rule: " << this->getdiscount() << "\t"
-					 << r_product.getdiscount() << endl;
-			if (this->getdiscount_rule() != dynamic_cast<const Cookie &>(r_product).getdiscount_rule())
-				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
-					 << dynamic_cast<const Cookie &>(r_product).getdiscount_rule() << endl;
-			terminate();
-		}
-	}
-
-	void operator+(int quantity) override
-	{
-		this->setquantity(this->getquantity() + quantity);
-	}
-
-	void operator-(const Product &r_product) override
-	{
-		try
-		{
-			if (*this != r_product)
-				throw runtime_error("You can't add two different product");
-			else
-			{
-				this->setquantity(this->getquantity() - r_product.getquantity());
-			}
-		}
-		catch (runtime_error &err)
-		{
-			if (this->getname() != r_product.getname())
-				cerr << "Different name: " << this->getname() << "\t" << r_product.getname() << endl;
-			if (this->getprice() != r_product.getprice())
-				cerr << "Different price: " << this->getprice() << "\t" << r_product.getprice() << endl;
-			if (this->getdiscount() != r_product.getdiscount())
-				cerr << "Different discount rule: " << this->getdiscount() << "\t"
-					 << r_product.getdiscount() << endl;
-			if (this->getdiscount_rule() != dynamic_cast<const Cookie &>(r_product).getdiscount_rule())
-				cerr << "Different discount rule: " << this->getdiscount_rule() << "\t"
-					 << dynamic_cast<const Cookie &>(r_product).getdiscount_rule() << endl;
-			terminate();
-		}
-	}
-
-	void operator-(int quantity) override
-	{
-		this->setquantity(this->getquantity() - quantity);
-	}
 };
 
 #endif //INC_113ASSIGNMENT_BAKERY_PRODUCT_H
