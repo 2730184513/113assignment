@@ -1,8 +1,8 @@
 //
 // Created by dengchujie on 24-4-26.
 //
-#ifndef INC_113ASSIGNMENT_BAKERY_PRODUCT_H
-#define INC_113ASSIGNMENT_BAKERY_PRODUCT_H
+#ifndef BAKERY_PRODUCT_H
+#define BAKERY_PRODUCT_H
 
 #include <iostream>
 #include <string>
@@ -25,9 +25,8 @@ public:
 
 	Discount(int dr, float d) : discount_rule(dr), discount(d)
 	{}
-	Discount(Discount& a) : discount_rule(a.getdiscount_rule()), discount(a.getdiscount())
+	Discount(Discount& d) : discount_rule(d.getdiscount_rule()), discount(d.getdiscount())
 	{}
-
 	virtual ~Discount() = default;
 	virtual void
 	PURE_VIRTUAL() = 0;    //Create a pure virtual function to disable instantiation of this class,
@@ -44,9 +43,6 @@ public:
 };
 class Product    //The basic class to represent the fundamental information and composition of a product.
 {// Also a pure virtual(abstract) class, can't be instantiated neither.
-private:
-	Discount* p_discount = nullptr;
-
 protected:
 	string product_name;
 	float product_price;
@@ -56,8 +52,9 @@ public:
 	{}
 	Product(string& pn, float p, int t) : product_name(pn), product_price(p), product_quantity(t)
 	{}
-	virtual ~Product()
-	{ delete p_discount; }
+	Product(Product& p) : product_name(p.getname()), product_price(p.getprice()), product_quantity(p.getquantity())
+	{}
+	virtual ~Product() = default;
 	void setname(const string& name)
 	{ product_name = name; }
 	void setprice(float price)
@@ -160,6 +157,8 @@ public:
 	{}
 	explicit Cake_Discount(float d) : Discount(d)
 	{}
+	Cake_Discount(Cake_Discount& c) : Discount(c)
+	{}
 	~Cake_Discount() override = default;
 	void PURE_VIRTUAL() override
 	{}
@@ -178,6 +177,8 @@ public:
 	Cookie_Discount(int dr1, float d) : Discount(dr1, d)
 	{}
 	explicit Cookie_Discount(float d) : Discount(d)
+	{}
+	Cookie_Discount(Cookie_Discount& c) : Discount(c)
 	{}
 	~Cookie_Discount() override = default;
 	void PURE_VIRTUAL() override
@@ -203,6 +204,8 @@ public:
 	{}
 	Cake(string& n, float p, int q, int dr1, float d) : Product(n, p, q), CD(dr1, d)
 	{}
+	Cake(Cake& cake) : Product(cake), CD(cake.getdiscount_rule(), cake.getdiscount())
+	{}
 	~Cake() override = default;
 	void setdiscount(float d) override
 	{ CD.setdiscount(d); }
@@ -214,7 +217,7 @@ public:
 	{ return CD.getdiscount_rule(); }
 	static int getdicount_rule2()
 	{ return Cake_Discount::getdiscount_rule2(); }
-	Cake& operator = (const Cake& r_product)
+	Cake& operator =(const Cake& r_product)
 	{
 		if (this == &r_product)
 		{
@@ -241,19 +244,19 @@ public:
 			return *this;
 		}
 	}
-	Cake& operator = (const Product& r_product)
+	Cake& operator =(const Product& r_product)
 	{
-		*this=dynamic_cast<const Cake&>(r_product);
+		*this = dynamic_cast<const Cake&>(r_product);
 		return *this;
 	}
-	Cake& operator += (const Cake& r_product)
+	Cake& operator +=(const Cake& r_product)
 	{ return *this = *this + r_product; }
-	Cake& operator += (const Product& r_product)
-	{return *this=*this+dynamic_cast<const Cake&>(r_product);}
-	Cake& operator -= (const Cake& r_product)
+	Cake& operator +=(const Product& r_product)
+	{ return *this = *this + dynamic_cast<const Cake&>(r_product); }
+	Cake& operator -=(const Cake& r_product)
 	{ return *this = *this - r_product; }
-	Cake& operator -= (const Product& r_product)
-	{return *this=*this-dynamic_cast<const Cake&>(r_product);}
+	Cake& operator -=(const Product& r_product)
+	{ return *this = *this - dynamic_cast<const Cake&>(r_product); }
 };
 class Cookie final : public Product
 {
@@ -272,6 +275,8 @@ public:
 	{}
 	Cookie(string& n, float p, int q, int dr1, float d) : Product(n, p, q), CD(dr1, d)
 	{}
+	Cookie(Cookie& cookie) : Product(cookie), CD(cookie.getdiscount_rule(), cookie.getdiscount())
+	{}
 	~Cookie() override = default;
 	void setdiscount(float d) override
 	{ CD.setdiscount(d); }
@@ -283,7 +288,7 @@ public:
 	{ return CD.getdiscount_rule(); }
 	static int getdicount_rule2()
 	{ return Cake_Discount::getdiscount_rule2(); }
-	Cookie& operator = (const Cookie& r_product)
+	Cookie& operator =(const Cookie& r_product)
 	{
 		if (this == &r_product)
 		{
@@ -310,20 +315,20 @@ public:
 			return *this;
 		}
 	}
-	Cookie& operator = (const Product& r_product)
+	Cookie& operator =(const Product& r_product)
 	{
-		*this=dynamic_cast<const Cookie&>(r_product);
+		*this = dynamic_cast<const Cookie&>(r_product);
 		return *this;
 	}
-	Cookie& operator += (const Cookie& r_product)
+	Cookie& operator +=(const Cookie& r_product)
 	{ return *this = *this + r_product; }
-	Cookie& operator += (const Product& r_product)
-	{return *this=*this+dynamic_cast<const Cookie&>(r_product);}
-	Cookie& operator -= (const Cookie& r_product)
+	Cookie& operator +=(const Product& r_product)
+	{ return *this = *this + dynamic_cast<const Cookie&>(r_product); }
+	Cookie& operator -=(const Cookie& r_product)
 	{ return *this = *this - r_product; }
-	Cookie& operator -= (const Product& r_product)
-	{return *this=*this-dynamic_cast<const Cookie&>(r_product);}
+	Cookie& operator -=(const Product& r_product)
+	{ return *this = *this - dynamic_cast<const Cookie&>(r_product); }
 };
 
-#endif //INC_113ASSIGNMENT_BAKERY_PRODUCT_H
+#endif //BAKERY_PRODUCT_H
 
