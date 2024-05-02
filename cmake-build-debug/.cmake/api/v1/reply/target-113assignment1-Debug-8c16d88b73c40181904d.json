@@ -96,7 +96,11 @@
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				1
+				1,
+				2,
+				3,
+				4,
+				5
 			]
 		}
 	],
@@ -110,7 +114,27 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Bakery_Product.h",
+			"path" : "Specific_Product_class.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Abstract_Discount_class.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Abstract_Product_class.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Specific_Discount_class.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "State.h",
 			"sourceGroupIndex" : 1
 		}
 	],
