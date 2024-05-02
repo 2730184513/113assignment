@@ -8,4 +8,5 @@ add_executable(113assignment1 main.cpp
         Abstract_Discount_class.h
         Abstract_Product_class.h
         Specific_Discount_class.h
-        State.h)
+        State.h
+        Inventory_manager.h)

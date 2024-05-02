@@ -88,6 +88,9 @@
 		<Unit filename="E:/cproject/git_test/Abstract_Product_class.h">
 			<Option target="113assignment1"/>
 		</Unit>
+		<Unit filename="E:/cproject/git_test/Inventory_manager.h">
+			<Option target="113assignment1"/>
+		</Unit>
 		<Unit filename="E:/cproject/git_test/Specific_Discount_class.h">
 			<Option target="113assignment1"/>
 		</Unit>
