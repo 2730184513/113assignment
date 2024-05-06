@@ -30,7 +30,6 @@ public:
 			product_quantity(q),
 			product_type(t), discount(dr, d)
 	{ this->setdiscount_rule2(); }
-
 	//Creat a copy constructor
 	Product(Product& p) : product_name(p.getname()), product_price(p.getprice()), product_quantity(p.getquantity()),
 			product_type(p.gettype()), discount(p.getdiscount_rule1(), p.getdiscount())
