@@ -91,9 +91,9 @@ public:
 	//To judge whether two products are same or not
 	bool operator ==(const Product& r_product) const
 	{
-		return this->gettype() == r_product.gettype()
-			   && this->getname() == r_product.getname()
-			   && this->getprice() == r_product.getprice()
+		return product_type == r_product.product_type
+			   && product_name == r_product.product_name
+			   && product_price == r_product.product_price
 			   && this->getdiscount() == r_product.getdiscount()
 			   && this->getdiscount_rule1() == r_product.getdiscount_rule1();
 	}
@@ -112,7 +112,7 @@ public:
 		}
 		else
 		{
-			this->setquantity(this->getquantity() + r_product.getquantity());
+			this->setquantity(product_quantity+ r_product.product_quantity);
 			return *this;
 		}
 	}
@@ -120,7 +120,7 @@ public:
 	//Simply add quantity into the product's quantity
 	Product& operator +(int quantity)
 	{
-		this->setquantity(this->getquantity() + quantity);
+		this->setquantity(product_quantity + quantity);
 		return *this;
 	}
 
@@ -131,7 +131,7 @@ public:
 			throw runtime_error("You can't add two different product");
 		else
 		{
-			this->setquantity(this->getquantity() - r_product.getquantity());
+			this->setquantity(product_quantity - r_product.product_quantity);
 			return *this;
 		}
 	}
@@ -139,7 +139,7 @@ public:
 	//Simply subtract quantity from the same product's quantity
 	Product& operator -(int quantity)
 	{
-		this->setquantity(this->getquantity() - quantity);
+		this->setquantity(product_quantity - quantity);
 		return *this;
 	}
 
@@ -148,17 +148,17 @@ public:
 		if (this == &r_product)
 		{
 			auto* temp = new Product;
-			temp->setname(r_product.getname());
-			temp->setprice(r_product.getprice());
-			temp->setquantity(r_product.getquantity());
-			temp->settype(r_product.gettype());
+			temp->setname(r_product.product_name);
+			temp->setprice(r_product.product_price);
+			temp->setquantity(r_product.product_quantity);
+			temp->settype(r_product.product_type);
 			temp->setdiscount(r_product.getdiscount());
 			temp->setdiscount_rule1(r_product.getdiscount_rule1());
 			temp->setdiscount_rule2();
-			this->setname(temp->getname());
-			this->setprice(temp->getprice());
-			this->setquantity(temp->getquantity());
-			this->settype(temp->gettype());
+			this->setname(temp->product_name);
+			this->setprice(temp->product_price);
+			this->setquantity(temp->product_quantity);
+			this->settype(temp->product_type);
 			this->setdiscount(temp->getdiscount());
 			this->setdiscount_rule1(temp->getdiscount_rule1());
 			this->setdiscount_rule2();
@@ -167,10 +167,10 @@ public:
 		}
 		else
 		{
-			this->setname(r_product.getname());
-			this->setprice(r_product.getprice());
-			this->setquantity(r_product.getquantity());
-			this->settype(r_product.gettype());
+			this->setname(r_product.product_name);
+			this->setprice(r_product.product_price);
+			this->setquantity(r_product.product_quantity);
+			this->settype(r_product.product_type);
 			this->setdiscount(r_product.getdiscount());
 			this->setdiscount_rule1(r_product.getdiscount_rule1());
 			this->setdiscount_rule2();
