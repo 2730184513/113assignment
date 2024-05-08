@@ -5,41 +5,58 @@
 #ifndef ABSTRACT_PRODUCT_CLASS_H
 #define ABSTRACT_PRODUCT_CLASS_H
 #define CAKE (0)
+#define COOKIE (1)
 #define CAKE_DISCOUNT_RULE (3)
 #define COOKIE_DISCOUNT_RULE (5)
-#define COOKIE (1)
+
 #include <iostream>
 #include <string>
 #include "State.h"
 #include "Abstract_Discount_class.h"
+
+
 using namespace std;
+
 
 class Product
 {
-protected:
+private:
+	bool product_type = NO_INITIALIZED;
 	string product_name = "NO_INITIALIZED";
 	float product_price = NO_INITIALIZED;
 	int product_quantity = NO_INITIALIZED;
-	int product_type = NO_INITIALIZED;
+	int product_code = NO_INITIALIZED;
 	Discount discount;
+	const static int CODE_LENGTH = 5;
+
+	void setdiscount_rule2()
+	{
+		if (product_type == CAKE)
+			discount.setdiscount_rule2(CAKE_DISCOUNT_RULE);
+		if (product_type == COOKIE)
+			discount.setdiscount_rule2(COOKIE_DISCOUNT_RULE);
+	}
+
 public:
 	//Constructor
 	Product() = default;
 
-	Product(string& pn, float p, int q, int t, int dr, float d) : product_name(pn), product_price(p),
-			product_quantity(q),
-			product_type(t), discount(dr, d)
+	Product(const string &pn, int t, float p, int q, int dr, float d) : product_name(pn), product_type(t), product_price(p),
+																  product_quantity(q), discount(dr, d)
 	{ this->setdiscount_rule2(); }
+
 	//Creat a copy constructor
-	Product(Product& p) : product_name(p.getname()), product_price(p.getprice()), product_quantity(p.getquantity()),
-			product_type(p.gettype()), discount(p.getdiscount_rule1(), p.getdiscount())
+	Product(Product &p)
+			: product_name(p.product_name), product_price(p.product_price), product_quantity(p.product_quantity),
+			  product_type(p.product_type), discount(p.getdiscount_rule1(), p.getdiscount()),
+			  product_code(p.product_code)
 	{ this->setdiscount_rule2(); }
 
 	//Destructor
 	~Product() = default;
 
 	//Mutators
-	void setname(const string& name)
+	void setname(const string &name)
 	{ product_name = name; }
 
 	void setprice(float price)
@@ -57,13 +74,8 @@ public:
 	void setdiscount_rule1(int dr)
 	{ discount.setdiscount_rule1(dr); }
 
-	void setdiscount_rule2()
-	{
-		if (product_type == CAKE)
-			discount.setdiscount_rule2(CAKE_DISCOUNT_RULE);
-		if (product_type == COOKIE)
-			discount.setdiscount_rule2(COOKIE_DISCOUNT_RULE);
-	}
+	void setproduct_code(int code)
+	{ product_code = code; }
 
 	//Accessors
 	string getname() const
@@ -87,9 +99,15 @@ public:
 	int getdiscount_rule2() const
 	{ return discount.getdiscount_rule2(); }
 
+	int getcode() const
+	{ return product_code; }
+
+	static int getcode_length()
+	{ return Product::CODE_LENGTH; }
+
 	//Operators overloading: "=="; "!="; "+"; "-"
 	//To judge whether two products are same or not
-	bool operator ==(const Product& r_product) const
+	bool operator==(const Product &r_product) const
 	{
 		return product_type == r_product.product_type
 			   && product_name == r_product.product_name
@@ -99,11 +117,11 @@ public:
 	}
 
 	//When overload "==", we usually need to also overload its opposite operation "!="
-	bool operator !=(const Product& r_product) const
+	bool operator!=(const Product &r_product) const
 	{ return !(*this == r_product); }
 
 	//Overload "+" to add one product's quantity into the same product's quantity
-	Product& operator +(const Product& r_product)
+	Product &operator+(const Product &r_product)
 	{
 		if (*this != r_product)
 		{
@@ -112,20 +130,20 @@ public:
 		}
 		else
 		{
-			this->setquantity(product_quantity+ r_product.product_quantity);
+			this->setquantity(product_quantity + r_product.product_quantity);
 			return *this;
 		}
 	}
 
 	//Simply add quantity into the product's quantity
-	Product& operator +(int quantity)
+	Product &operator+(int quantity)
 	{
 		this->setquantity(product_quantity + quantity);
 		return *this;
 	}
 
 	//Overload "-" to subtract one product's quantity from the same product's quantity
-	Product& operator -(const Product& r_product)
+	Product &operator-(const Product &r_product)
 	{
 		if (*this != r_product)
 			throw runtime_error("You can't add two different product");
@@ -137,17 +155,17 @@ public:
 	}
 
 	//Simply subtract quantity from the same product's quantity
-	Product& operator -(int quantity)
+	Product &operator-(int quantity)
 	{
 		this->setquantity(product_quantity - quantity);
 		return *this;
 	}
 
-	Product& operator =(const Product& r_product)
+	Product &operator=(const Product &r_product)
 	{
 		if (this == &r_product)
 		{
-			auto* temp = new Product;
+			auto *temp = new Product;
 			temp->setname(r_product.product_name);
 			temp->setprice(r_product.product_price);
 			temp->setquantity(r_product.product_quantity);
@@ -180,11 +198,14 @@ public:
 	}
 
 	//Overload assign operator "+=", so that we can add one product to another product itself
-	Product& operator +=(const Product& r_product)
+	Product &operator+=(const Product &r_product)
 	{ return *this = *this + r_product; }
 
 	//Overload assign operator "-=", so that we can subtract one product itself from another
-	Product& operator -=(const Product& r_product)
+	Product &operator-=(const Product &r_product)
 	{ return *this = *this - r_product; }
 };
+
 #endif //ABSTRACT_PRODUCT_CLASS_H
+
+
