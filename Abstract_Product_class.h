@@ -4,11 +4,6 @@
 
 #ifndef ABSTRACT_PRODUCT_CLASS_H
 #define ABSTRACT_PRODUCT_CLASS_H
-#define CAKE (0)
-#define COOKIE (1)
-#define CAKE_DISCOUNT_RULE (3)
-#define COOKIE_DISCOUNT_RULE (5)
-
 #include <iostream>
 #include <string>
 #include "State.h"
