@@ -9,9 +9,13 @@
 #include "State.h"
 #include "Abstract_Discount_class.h"
 
-
 using namespace std;
 
+string toupper(const string& str);
+
+int whichtype(string& user_choice);
+
+string whichtype(int type);
 
 class Product
 {
@@ -36,22 +40,23 @@ public:
 	//Constructor
 	Product() = default;
 
-	Product(const string &pn, int t, float p, int q, int dr, float d) : product_name(pn), product_type(t), product_price(p),
-																  product_quantity(q), discount(dr, d)
+	Product(const string& pn, int t, float p, int q, int dr, float d) : product_name(pn), product_type(t),
+			product_price(p),
+			product_quantity(q), discount(dr, d)
 	{ this->setdiscount_rule2(); }
 
 	//Creat a copy constructor
-	Product(Product &p)
+	Product(Product& p)
 			: product_name(p.product_name), product_price(p.product_price), product_quantity(p.product_quantity),
-			  product_type(p.product_type), discount(p.getdiscount_rule1(), p.getdiscount()),
-			  product_code(p.product_code)
+			product_type(p.product_type), discount(p.getdiscount_rule1(), p.getdiscount()),
+			product_code(p.product_code)
 	{ this->setdiscount_rule2(); }
 
 	//Destructor
 	~Product() = default;
 
 	//Mutators
-	void setname(const string &name)
+	void setname(const string& name)
 	{ product_name = name; }
 
 	void setprice(float price)
@@ -100,9 +105,11 @@ public:
 	static int getcode_length()
 	{ return Product::CODE_LENGTH; }
 
+	friend ostream& print(Product& product);
+
 	//Operators overloading: "=="; "!="; "+"; "-"
 	//To judge whether two products are same or not
-	bool operator==(const Product &r_product) const
+	bool operator ==(const Product& r_product) const
 	{
 		return product_type == r_product.product_type
 			   && product_name == r_product.product_name
@@ -112,11 +119,11 @@ public:
 	}
 
 	//When overload "==", we usually need to also overload its opposite operation "!="
-	bool operator!=(const Product &r_product) const
+	bool operator !=(const Product& r_product) const
 	{ return !(*this == r_product); }
 
 	//Overload "+" to add one product's quantity into the same product's quantity
-	Product &operator+(const Product &r_product)
+	Product& operator +(const Product& r_product)
 	{
 		if (*this != r_product)
 		{
@@ -131,14 +138,14 @@ public:
 	}
 
 	//Simply add quantity into the product's quantity
-	Product &operator+(int quantity)
+	Product& operator +(int quantity)
 	{
 		this->setquantity(product_quantity + quantity);
 		return *this;
 	}
 
 	//Overload "-" to subtract one product's quantity from the same product's quantity
-	Product &operator-(const Product &r_product)
+	Product& operator -(const Product& r_product)
 	{
 		if (*this != r_product)
 			throw runtime_error("You can't add two different product");
@@ -150,17 +157,17 @@ public:
 	}
 
 	//Simply subtract quantity from the same product's quantity
-	Product &operator-(int quantity)
+	Product& operator -(int quantity)
 	{
 		this->setquantity(product_quantity - quantity);
 		return *this;
 	}
 
-	Product &operator=(const Product &r_product)
+	Product& operator =(const Product& r_product)
 	{
 		if (this == &r_product)
 		{
-			auto *temp = new Product;
+			auto* temp = new Product;
 			temp->setname(r_product.product_name);
 			temp->setprice(r_product.product_price);
 			temp->setquantity(r_product.product_quantity);
@@ -193,13 +200,69 @@ public:
 	}
 
 	//Overload assign operator "+=", so that we can add one product to another product itself
-	Product &operator+=(const Product &r_product)
+	Product& operator +=(const Product& r_product)
 	{ return *this = *this + r_product; }
 
 	//Overload assign operator "-=", so that we can subtract one product itself from another
-	Product &operator-=(const Product &r_product)
+	Product& operator -=(const Product& r_product)
 	{ return *this = *this - r_product; }
 };
+
+ostream& print(Product& product)
+{
+	cout << "Product type:\t"<<whichtype(product.product_type)<<endl;
+	cout<<"Product name:\t"<<product.product_name<<endl;
+	cout<<"Product price:\t"<<product.product_price<<endl;
+	cout<<"Product quantity:\t"<<product.product_quantity<<endl;
+	cout<<"The discount rule of this product:\t"<<product.getdiscount_rule1()<<endl;
+	cout<<"The discount percentage is:\t"<<product.getdiscount()<<endl;
+	return cout;
+}
+
+string toupper(const string& str)
+{
+	string uppered_str = str;
+	for (char& c: uppered_str)
+	{
+		if (c >= 'a' && c <= 'z')
+			c = c - 'a' + 'A';
+	}
+	return uppered_str;
+}
+//string title(const string& str)
+//{
+//	bool first_letter_flag=0;
+//	for(char c:str)
+//	{
+//		if(first_letter_flag==0)
+//		{
+//			string uppered_str = str;
+//			for (char c: uppered_str)
+//			{
+//				if (c >= 'a' && c <= 'z')
+//					c = c - 'a' + 'A';
+//			}
+//			return uppered_str;
+//		}
+//	}
+//}
+
+int whichtype(string& user_choice)
+{
+	if (user_choice == "CAKE" || user_choice == "CAKES") return CAKE;
+	else if (user_choice == "COOKIE" || user_choice == "COOKIES") return COOKIE;
+	else return WRONG_TYPE;
+}
+
+string whichtype(int type)
+{
+	if (type == CAKE)
+		return "CAKE";
+	else if (type == COOKIE)
+		return "COOKIE";
+	else
+		return "WRONG TYPE";
+}
 
 #endif //ABSTRACT_PRODUCT_CLASS_H
 

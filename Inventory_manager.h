@@ -127,25 +127,6 @@ int next_prime(int x)
 	}
 }
 
-string toupper(const string& str)
-{
-	string uppered_str = str;
-	for (char c: uppered_str)
-	{
-		if (c >= 'a' && c <= 'z')
-			c = c - 'a' + 'A';
-	}
-	return uppered_str;
-}
-
-int whichtype(string& user_choice)
-{
-	user_choice = toupper(user_choice);
-	if (user_choice == "CAKE" || user_choice == "CAKES") return CAKE;
-	else if (user_choice == "COOKIE" || user_choice == "COOKIES") return COOKIE;
-	else return WRONG_TYPE;
-}
-
 void CIM_System::inbound(ifstream& product_list)
 {
 	Product* temp;
@@ -167,65 +148,125 @@ void CIM_System::inbound(ifstream& product_list)
 
 void CIM_System::inbound(istream& user_input)
 {
-	Product* temp;
+	string user_choice;
 	do
 	{
-		string name, user_choice;
+		Product* temp;
+		string name;
 		bool type;
 		float price, discount_percentage;
 		int quantity, discount_rule1;
 		cout << "Please choose the type of the product you want to add (CAKE or COOKIE):\t";
 		user_input >> user_choice;
+		user_choice = toupper(user_choice);
 		while (whichtype(user_choice) == WRONG_TYPE)
 		{
-			system("clear");
+			system("cls");
 			cout << "You have entered a wrong type, please choose again:\t";
 			user_input >> user_choice;
 		}
 		type = whichtype(user_choice);
+		system("cls");
 		cout << "Please enter the name of the product you want to add:\t";
-		user_input >> name;
+		getchar();
+		getline(user_input, name);
+		system("cls");
 		cout << "Please enter its price:\t";
-		while (!(user_input >> price) || price <= 0)
+		user_input >> price;
+		while (user_input.fail() || price <= 0)
 		{
 			user_input.clear();
 			user_input.ignore(INT_MAX, '\n');
+			system("cls");
 			cout << "You have entered a wrong value for price, pleas enter again:\t";
 			user_input >> price;
 		}
+		system("cls");
 		cout << "Please enter its quantity:\t";
-		while (!(user_input >> quantity) || quantity <= 0)
+		user_input>>quantity;
+		while (user_input.fail()|| quantity <= 0)
 		{
 			user_input.clear();
 			user_input.ignore(INT_MAX, '\n');
+			system("cls");
 			cout << "You have entered a wrong value for quantity, pleas enter again:\t";
 			user_input >> quantity;
 		}
+		system("cls");
 		cout << "Please enter its discount rule.\n";
 		cout << "If it doesn't have discount rule, please enter 0.\n";
 		cout << "The discount rule:\t";
-		while (!(user_input >> discount_rule1) || discount_rule1 < 0)
+		user_input>>discount_rule1;
+		while (user_input.fail() || discount_rule1 < 0)
 		{
 			user_input.clear();
 			user_input.ignore(INT_MAX, '\n');
+			system("cls");
 			cout << "You have entered a wrong value for discount rule, pleas enter again:\t";
 			user_input >> discount_rule1;
 		}
 		if (discount_rule1 == 0)
 			discount_rule1 = INT_MAX;
-		if (discount_rule1 != 0)
+		else
 		{
-			cout << "Please enter its discount percentage:\t";
-			while (!(user_input >> discount_percentage) || !(0 < discount_percentage && discount_percentage < 1))
+			system("cls");
+			cout << "Please enter its discount percentage(between 0 and 1):\t";
+			user_input>>discount_percentage;
+			while (user_input.fail() || !(0 < discount_percentage && discount_percentage < 1))
 			{
 				user_input.clear();
 				user_input.ignore(INT_MAX, '\n');
+				system("cls");
 				cout << "You have entered a wrong value for discount percentage, pleas enter again:\t";
 				user_input >> discount_percentage;
 			}
 		}
+		temp = new Product(name, type, price, quantity, discount_rule1, discount_percentage);
+		system("cls");
+		cout << "Here is the information of the product you want to add. Please check whether it is correct or not.\n";
+		print(*temp);
+		cout << "If correct enter Y, if not enter N:\t";
+		getchar();
+		getline(user_input,user_choice);
+		user_choice = toupper(user_choice);
+		while (user_choice != "Y" && user_choice != "N")
+		{
+			system("cls");
+			cout<<user_choice;
+			cout << "You have entered a wrong choice, please enter again:\t";
+			getline(user_input,user_choice);
+		}
+		if (user_choice == "Y")
+		{
+			cout << "This product has been successfully added into warehouse." << endl;
+			addproduct(*temp);
+			temp = nullptr;
+			delete temp;
+		}
+		else
+		{
+			delete temp;
+			cout << "The information of the product that you entered has been cleared" << endl;
+		}
 
-	} while ();
+		cout << "Do you want to add again?" << endl;
+		cout << "Enter Y to add again or enter N to quit:\t";
+		getline(user_input,user_choice);
+		user_choice = toupper(user_choice);
+		while (user_choice != "Y" && user_choice != "N")
+		{
+			system("cls");
+			cout << "You have entered a wrong choice, please enter again:\t";
+			getline(user_input,user_choice);
+		}
+		user_choice = toupper(user_choice);
+		if (user_choice == "N")
+		{
+			system("cls");
+			cout << "Thank you for use." << endl;
+		}
+		else system("cls");
+	} while (user_choice != "N");
 }
 
 #endif //INVENTORY_MANAGER_H
