@@ -2,12 +2,12 @@
 // Created by dengchujie on 24-5-2.
 //
 
-#ifndef ABSTRACT_PRODUCT_CLASS_H
-#define ABSTRACT_PRODUCT_CLASS_H
+#ifndef PRODUCT_H
+#define PRODUCT_H
 #include <iostream>
 #include <string>
 #include "State.h"
-#include "Abstract_Discount_class.h"
+#include "Discount.h"
 
 using namespace std;
 
@@ -264,6 +264,6 @@ string whichtype(int type)
 		return "WRONG TYPE";
 }
 
-#endif //ABSTRACT_PRODUCT_CLASS_H
+#endif //PRODUCT_H
 
 

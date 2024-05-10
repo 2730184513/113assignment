@@ -82,22 +82,28 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="E:/cproject/git_test/Abstract_Discount_class.h">
+		<Unit filename="E:/cproject/git_test/Commodity_Inbound_Management_System.h">
 			<Option target="113assignment1"/>
 		</Unit>
-		<Unit filename="E:/cproject/git_test/Abstract_Product_class.h">
+		<Unit filename="E:/cproject/git_test/Commodity_Outbound_Management_System.h">
+			<Option target="113assignment1"/>
+		</Unit>
+		<Unit filename="E:/cproject/git_test/Commodity_Search_System.h">
+			<Option target="113assignment1"/>
+		</Unit>
+		<Unit filename="E:/cproject/git_test/Discount.h">
 			<Option target="113assignment1"/>
 		</Unit>
 		<Unit filename="E:/cproject/git_test/Inventory_manager.h">
 			<Option target="113assignment1"/>
 		</Unit>
-		<Unit filename="E:/cproject/git_test/Specific_Discount_class.h">
-			<Option target="113assignment1"/>
-		</Unit>
-		<Unit filename="E:/cproject/git_test/Specific_Product_class.h">
+		<Unit filename="E:/cproject/git_test/Product.h">
 			<Option target="113assignment1"/>
 		</Unit>
 		<Unit filename="E:/cproject/git_test/State.h">
+			<Option target="113assignment1"/>
+		</Unit>
+		<Unit filename="E:/cproject/git_test/Warehouse.h">
 			<Option target="113assignment1"/>
 		</Unit>
 		<Unit filename="E:/cproject/git_test/main.cpp">
