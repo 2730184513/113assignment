@@ -2,8 +2,8 @@
 // Created by dengchujie on 24-5-2.
 //
 
-#ifndef ABSTRACT_DISCOUNT_CLASS_H
-#define ABSTRACT_DISCOUNT_CLASS_H
+#ifndef DISCOUNT_H
+#define DISCOUNT_H
 #include <iostream>
 #include <string>
 #include "State.h"
@@ -57,4 +57,4 @@ public:
 	int getdiscount_rule2() const
 	{ return discount_rule2; }
 };
-#endif //ABSTRACT_DISCOUNT_CLASS_H
+#endif //DISCOUNT_H
