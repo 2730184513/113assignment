@@ -14,6 +14,9 @@ using namespace std;
 
 class Inventory_Manager
 {
+public:
+	Inventory_Manager()
+	{}
 
 };
 

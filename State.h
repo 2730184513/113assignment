@@ -13,5 +13,6 @@ enum State    //Represent the default state(value) to increase readability.
 	CAKE_DISCOUNT_RULE = 3,
 	COOKIE_DISCOUNT_RULE = 5,
 	WRONG_TYPE = -1,
+	SELLOUT = 0,
 };
 #endif //STATE_H
