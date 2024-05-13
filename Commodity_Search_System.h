@@ -56,7 +56,7 @@ public:
 		cakes = new Product* [count + 1];
 		cakes[0]->setquantity(count + 1);
 		for (int i = 0; i < count; i++)
-			cakes[i] = temp_cakes[i];
+			cakes[i + 1] = temp_cakes[i];
 		return cakes;
 	}
 
@@ -75,7 +75,7 @@ public:
 		cookies = new Product* [count + 1];
 		cookies[0]->setquantity(count + 1);
 		for (int i = 0; i < count; i++)
-			cookies[i] = temp_cookies[i];
+			cookies[i + 1] = temp_cookies[i];
 		return cookies;
 	}
 
@@ -94,7 +94,7 @@ public:
 		products = new Product* [count + 1];
 		products[0]->setquantity(count + 1);
 		for (int i = 0; i < count; i++)
-			products[i] = temp_products[i];
+			products[i + 1] = temp_products[i];
 		return products;
 	}
 
@@ -113,7 +113,46 @@ public:
 		products = new Product* [count + 1];
 		products[0]->setquantity(count + 1);
 		for (int i = 0; i < count; i++)
-			products[i] = temp_products[i];
+			products[i + 1] = temp_products[i];
+		return products;
+	}
+
+	Product** getsell_out(Product** products)
+	{
+		Product* temp_products[Warehouse::getcapacity()];
+		int count = 0;
+		for (int i = 0; i < Warehouse::getcapacity(); i++)
+		{
+			if (warehouse_accessor[i]->getquantity() == SELLOUT)
+			{
+				temp_products[count] = warehouse_accessor[i];
+				count++;
+			}
+		}
+		products = new Product* [count + 1];
+		products[0]->setquantity(count + 1);
+		for (int i = 0; i < count; i++)
+			products[i + 1] = temp_products[i];
+		return products;
+	}
+
+	Product** need_replenishment(Product** products, int rule)
+
+	{
+		Product* temp_products[Warehouse::getcapacity()];
+		int count = 0;
+		for (int i = 0; i < Warehouse::getcapacity(); i++)
+		{
+			if (warehouse_accessor[i]->getquantity() <= rule)
+			{
+				temp_products[count] = warehouse_accessor[i];
+				count++;
+			}
+		}
+		products = new Product* [count + 1];
+		products[0]->setquantity(count + 1);
+		for (int i = 0; i < count; i++)
+			products[i + 1] = temp_products[i];
 		return products;
 	}
 
@@ -132,7 +171,7 @@ public:
 		products = new Product* [count + 1];
 		products[0]->setquantity(count + 1);
 		for (int i = 0; i < count; i++)
-			products[i] = temp_products[i];
+			products[i + 1] = temp_products[i];
 		return products;
 	}
 
