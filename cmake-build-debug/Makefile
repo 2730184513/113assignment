@@ -116,24 +116,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named 113assignment1
+# Target rules for targets named git_test
 
 # Build rule for target.
-113assignment1: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 113assignment1
-.PHONY : 113assignment1
+git_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 git_test
+.PHONY : git_test
 
 # fast build rule for target.
-113assignment1/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\113assignment1.dir\build.make CMakeFiles/113assignment1.dir/build
-.PHONY : 113assignment1/fast
+git_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\git_test.dir\build.make CMakeFiles/git_test.dir/build
+.PHONY : git_test/fast
 
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
 # target to build an object file
 main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\113assignment1.dir\build.make CMakeFiles/113assignment1.dir/main.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\git_test.dir\build.make CMakeFiles/git_test.dir/main.cpp.obj
 .PHONY : main.cpp.obj
 
 main.i: main.cpp.i
@@ -141,7 +141,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\113assignment1.dir\build.make CMakeFiles/113assignment1.dir/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\git_test.dir\build.make CMakeFiles/git_test.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -149,7 +149,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\113assignment1.dir\build.make CMakeFiles/113assignment1.dir/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\git_test.dir\build.make CMakeFiles/git_test.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -160,7 +160,7 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... 113assignment1
+	@echo ... git_test
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s

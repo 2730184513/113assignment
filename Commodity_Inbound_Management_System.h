@@ -12,33 +12,33 @@
 
 using namespace std;
 
-string toupper(const string &str);
+string toupper(const string& str);
 
-string tolower(const string &str);
+string tolower(const string& str);
 
-string title(const string &str);
+string title(const string& str);
 
 //Commodity Inbound Management System
 class CIM_System
 {
-	Product **warehouse_accessor = nullptr;
+	Product** warehouse_accessor = nullptr;
 	int total = 0;
 
-	static int calculate_code(const string &name)
+	static int calculate_code(const string& name)
 	{
 		int product_code = 0;
 		int warehouse_capacity = Warehouse::getcapacity();
 		for (const unsigned char c: name)
-			product_code = ((product_code << 4) ^ (product_code >> 28) ^ (int) c) % warehouse_capacity;
+			product_code = ((product_code << 4)^(product_code >> 28)^(int) c) % warehouse_capacity;
 		return product_code;
 	}
 
-	void addproduct(Product &temp);
+	State addproduct(Product& temp);
 
 public:
 	CIM_System() = delete;    //必须要与一个仓库进行匹配
 
-	explicit CIM_System(Warehouse &warehouse) : warehouse_accessor(warehouse.getproducts())
+	explicit CIM_System(Warehouse& warehouse) : warehouse_accessor(warehouse.getproducts())
 	{}
 
 	~CIM_System()
@@ -47,14 +47,14 @@ public:
 	int gettotal() const
 	{ return total; }
 
-	void inbound(ifstream &product_list);
+	State inbound(ifstream& product_list);
 
-	void inbound(istream &user_input);
+	void inbound(istream& user_input);
 
 	int update_total();
 };
 
-void CIM_System::addproduct(Product &temp)
+State CIM_System::addproduct(Product& temp)
 {
 	int position = calculate_code(temp.getname());
 	if (warehouse_accessor[position] == nullptr)
@@ -62,30 +62,42 @@ void CIM_System::addproduct(Product &temp)
 		warehouse_accessor[position] = &temp;
 		warehouse_accessor[position]->setproduct_code(position);
 		total++;
+		return SUCCESS;
 	}
 	else
 	{
 		if (*warehouse_accessor[position] == temp)
+		{
 			*warehouse_accessor[position] += temp;
+			return SUCCESS;
+		}
 		else
 		{
-			for (int i = 1; i < INT_MAX; i++)
+			int flag = 1;
+			for (int step = 1; step < INT_MAX; step++)
 			{
-				position = (position + i * i) % Warehouse::getcapacity();
+				position = (position + step * step) % Warehouse::getcapacity();
+				flag++;
 				if (warehouse_accessor[position] == nullptr)
 				{
 					warehouse_accessor[position] = &temp;
 					break;
 				}
 			}
-			total++;
+			if (flag == INT_MAX)
+				return FAILED;
+			else
+			{
+				total++;
+				return SUCCESS;
+			}
 		}
 	}
 }
 
-void CIM_System::inbound(ifstream &product_list)
+State CIM_System::inbound(ifstream& product_list)
 {
-	Product *temp;
+	Product* temp;
 	while (!product_list.eof())
 	{
 		//The content of product_list is something like this.
@@ -100,14 +112,18 @@ void CIM_System::inbound(ifstream &product_list)
 	}
 	temp = nullptr;
 	delete temp;
+	if (product_list.fail())
+		return FAILED;
+	else
+		return SUCCESS;
 }
 
-void CIM_System::inbound(istream &user_input)
+void CIM_System::inbound(istream& user_input)
 {
 	string user_choice;
 	do
 	{
-		Product *temp;
+		Product* temp;
 		string name;
 		bool type;
 		float price, discount_percentage;
@@ -199,7 +215,6 @@ void CIM_System::inbound(istream &user_input)
 		if (user_choice == "Y")
 		{
 			cout << "This product has been successfully added into warehouse." << endl;
-			addproduct(*temp);
 			temp = nullptr;
 			delete temp;
 		}
@@ -249,10 +264,10 @@ int CIM_System::update_total()
 	return original_total - updated_total;
 }
 
-string toupper(const string &str)
+string toupper(const string& str)
 {
 	string uppered_str = str;
-	for (char &c: uppered_str)
+	for (char& c: uppered_str)
 	{
 		if (c >= 'a' && c <= 'z')
 			c = c - 'a' + 'A';
@@ -260,10 +275,10 @@ string toupper(const string &str)
 	return uppered_str;
 }
 
-string tolower(const string &str)
+string tolower(const string& str)
 {
 	string lowered_str = str;
-	for (char &c: lowered_str)
+	for (char& c: lowered_str)
 	{
 		if (c >= 'A' && c <= 'Z')
 			c = c - 'A' + 'a';
@@ -271,11 +286,11 @@ string tolower(const string &str)
 	return lowered_str;
 }
 
-string title(const string &str)
+string title(const string& str)
 {
 	string capitalized_str = str;
 	bool firstletter = true;
-	for (char &c: capitalized_str)
+	for (char& c: capitalized_str)
 	{
 		if (firstletter)
 		{
@@ -291,6 +306,5 @@ string title(const string &str)
 	}
 	return capitalized_str;
 }
-
 
 #endif //COMMODITY_INBOUND_MANAGEMENT_SYSTEM_H
