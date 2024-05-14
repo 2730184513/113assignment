@@ -24,18 +24,14 @@ class Warehouse
 public:
 	Warehouse()
 	{
-		for(int i =0;i<max_capacity;i++)
-			products[i]= nullptr;
+		for (int i = 0; i < max_capacity; i++)
+			products[i] = nullptr;
 	}
 
 	Warehouse(Warehouse& wh) = delete;    //不存在所谓的复制一个仓库所以禁止这个功能
 
 	~Warehouse()
-	{
-		for(int i =0;i<max_capacity;i++)
-			delete products[i];
-		delete[] products;
-	}
+	{ delete[] products;}
 
 	//Accessors
 	static int getcapacity()
@@ -43,6 +39,8 @@ public:
 
 	Product** getproducts()
 	{ return products; }
+
+
 };
 
 const int Warehouse::size = pow(10, Product::getcode_length());
@@ -78,7 +76,5 @@ int next_prime(int x)
 		prime++;
 	}
 }
-
-
 
 #endif //WAREHOUSE_H

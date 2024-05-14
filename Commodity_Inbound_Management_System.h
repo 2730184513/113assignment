@@ -6,6 +6,7 @@
 #define COMMODITY_INBOUND_MANAGEMENT_SYSTEM_H
 
 #include "Warehouse.h"
+#include "Product_List.h"
 #include<iostream>
 #include <string>
 #include <fstream>
@@ -33,42 +34,43 @@ class CIM_System
 		return product_code;
 	}
 
-	State addproduct(Product& temp);
-
 public:
 	CIM_System() = delete;    //必须要与一个仓库进行匹配
 
 	explicit CIM_System(Warehouse& warehouse) : warehouse_accessor(warehouse.getproducts())
 	{}
 
-	~CIM_System()
-	{ delete warehouse_accessor; }
+	~CIM_System() = default;
 
 	int gettotal() const
 	{ return total; }
+
+	State inbound(Product& product);
 
 	State inbound(ifstream& product_list);
 
 	void inbound(istream& user_input);
 
+	void inbound(Product_List& product_list);
+
 	int update_total();
 };
 
-State CIM_System::addproduct(Product& temp)
+State CIM_System::inbound(Product& product)
 {
-	int position = calculate_code(temp.getname());
+	int position = calculate_code(product.getname());
 	if (warehouse_accessor[position] == nullptr)
 	{
-		warehouse_accessor[position] = &temp;
+		warehouse_accessor[position] = &product;
 		warehouse_accessor[position]->setproduct_code(position);
 		total++;
 		return SUCCESS;
 	}
 	else
 	{
-		if (*warehouse_accessor[position] == temp)
+		if (*warehouse_accessor[position] == product)
 		{
-			*warehouse_accessor[position] += temp;
+			*warehouse_accessor[position] += product;
 			return SUCCESS;
 		}
 		else
@@ -80,7 +82,7 @@ State CIM_System::addproduct(Product& temp)
 				flag++;
 				if (warehouse_accessor[position] == nullptr)
 				{
-					warehouse_accessor[position] = &temp;
+					warehouse_accessor[position] = &product;
 					break;
 				}
 			}
@@ -108,7 +110,7 @@ State CIM_System::inbound(ifstream& product_list)
 		int quantity, discount_rule1;
 		product_list >> name >> type >> price >> quantity >> discount_rule1 >> discount_percentage;
 		temp = new Product(name, type, price, quantity, discount_rule1, discount_percentage);
-		addproduct(*temp);
+		inbound(*temp);
 	}
 	temp = nullptr;
 	delete temp;
@@ -242,6 +244,14 @@ void CIM_System::inbound(istream& user_input)
 		}
 		else system("cls");
 	} while (user_choice != "N");
+}
+
+void CIM_System::inbound(Product_List& product_list)
+{
+	int size = product_list.gettotal();
+	Product** list = product_list.getproducts();
+	for(int i =0;i<size;i++)
+		inbound(*list[i]);
 }
 
 int CIM_System::update_total()

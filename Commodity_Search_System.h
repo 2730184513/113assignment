@@ -5,6 +5,7 @@
 #ifndef COMMODITY_SEARCH_SYSTEM_H
 #define COMMODITY_SEARCH_SYSTEM_H
 #include "Warehouse.h"
+#include "Product_List.h"
 #include<iostream>
 #include <string>
 using namespace std;
@@ -29,8 +30,7 @@ public:
 	explicit CS_System(Warehouse& wh) : warehouse_accessor(wh.getproducts())
 	{}
 
-	~CS_System()
-	{ delete warehouse_accessor; }
+	~CS_System()=default;
 
 	Product& getproduct(int product_code)
 	{ return **(warehouse_accessor + product_code); }
@@ -41,9 +41,9 @@ public:
 		return **(warehouse_accessor + product_code);
 	}
 
-	Product** getcakes(Product** cakes)
+	Product_List getcakes(Product** cakes)
 	{
-		Product* temp_cakes[Warehouse::getcapacity()];
+		Product_List temp_cakes();
 		int count = 0;
 		for (int i = 0; i < Warehouse::getcapacity(); i++)
 		{

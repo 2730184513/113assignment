@@ -34,6 +34,8 @@ public:
 	explicit COM_System(Warehouse& wh) : warehouse_accessor(wh.getproducts())
 	{}
 
+	~COM_System() = default;
+
 	State outbound(Product& product);
 
 	int outbound(Product** product_list);

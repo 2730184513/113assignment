@@ -12,4 +12,5 @@ add_executable(git_test main.cpp
         Commodity_Inbound_Management_System.h
         Commodity_Outbound_Management_System.h
         Commodity_Search_System.h
+        Product_List.h
 )
