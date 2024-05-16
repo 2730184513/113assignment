@@ -20,12 +20,11 @@ string gettime();
 //Commodity Outbound Management System
 class COM_System
 {
-	Product** warehouse_accessor = nullptr;
+	Product** const warehouse_accessor = nullptr;
 
 	void remove_product(Product& product)
 	{
-		int position = product.getcode();
-		*warehouse_accessor[position] -= product;
+		*warehouse_accessor[product.getcode()] -= product;
 	}
 
 public:
@@ -74,8 +73,7 @@ int COM_System::outbound(Product** product_list)
 	int i = 1;
 	for (i; i <= product_list[0]->getquantity(); i++)
 	{
-		State state = outbound(*product_list[i]);
-		if (state == FAILED)
+		if (outbound(*product_list[i])== FAILED)
 			break;
 	}
 	return i;
@@ -83,7 +81,7 @@ int COM_System::outbound(Product** product_list)
 
 string getdate()
 {
-	time_t now = time(0);
+	time_t now = time(nullptr);
 	tm* local_time = localtime(&now);
 	char buffer[80];
 	strftime(buffer, 80, "%Y-%B-%d-%A", local_time);
@@ -93,7 +91,7 @@ string getdate()
 
 string gettime()
 {
-	time_t now = time(0);
+	time_t now = time(nullptr);
 	tm* local_time = localtime(&now);
 	char buffer[80];
 	strftime(buffer, 80, "%X", local_time);

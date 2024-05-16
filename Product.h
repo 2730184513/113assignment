@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string>
-#include <utility>
+#include <iomanip>
 #include "State.h"
 #include "Discount.h"
 
@@ -20,13 +20,13 @@ string whichtype(int type);
 class Product
 {
 private:
-	bool product_type = NO_INITIALIZED;
+	int product_type = NO_INITIALIZED;
 	string product_name = "NO_INITIALIZED";
 	float product_price = NO_INITIALIZED;
 	int product_quantity = NO_INITIALIZED;
 	int product_code = NO_INITIALIZED;
 	Discount discount;
-	const static int CODE_LENGTH = 5;
+	const static int CODE_LENGTH = 4;
 
 	void setdiscount_rule2()
 	{
@@ -46,7 +46,7 @@ public:
 	{ this->setdiscount_rule2(); }
 
 	//Creat a copy constructor
-	Product(Product &p)
+	Product(const Product &p)
 			: product_name(p.product_name), product_price(p.product_price), product_quantity(p.product_quantity),
 			  product_type(p.product_type), discount(p.getdiscount_rule1(), p.getdiscount()),
 			  product_code(p.product_code)
@@ -105,7 +105,7 @@ public:
 	static int getcode_length()
 	{ return Product::CODE_LENGTH; }
 
-	friend ostream &print(Product &product);
+	friend ostream &print(const Product &product);
 
 	//Operators overloading: "=="; "!="; "+"; "-"
 	//To judge whether two products are same or not
@@ -151,7 +151,7 @@ public:
 			throw runtime_error("You can't subtract two different product");
 		else
 		{
-			if((product_quantity - r_product.product_quantity)<0)
+			if ((product_quantity - r_product.product_quantity) < 0)
 				throw runtime_error("You can't subtract a product's quantity into negative value");
 			else
 				this->setquantity(product_quantity - r_product.product_quantity);
@@ -162,7 +162,7 @@ public:
 	//Simply subtract quantity from the same product's quantity
 	Product &operator-(int quantity)
 	{
-		if((product_quantity - quantity)<0)
+		if ((product_quantity - quantity) < 0)
 			throw runtime_error("You can't subtract a product's quantity into negative value");
 		else
 			this->setquantity(product_quantity - quantity);
@@ -172,25 +172,7 @@ public:
 	Product &operator=(const Product &r_product)
 	{
 		if (this == &r_product)
-		{
-			auto *temp = new Product;
-			temp->setname(r_product.product_name);
-			temp->setprice(r_product.product_price);
-			temp->setquantity(r_product.product_quantity);
-			temp->settype(r_product.product_type);
-			temp->setdiscount(r_product.getdiscount());
-			temp->setdiscount_rule1(r_product.getdiscount_rule1());
-			temp->setdiscount_rule2();
-			this->setname(temp->product_name);
-			this->setprice(temp->product_price);
-			this->setquantity(temp->product_quantity);
-			this->settype(temp->product_type);
-			this->setdiscount(temp->getdiscount());
-			this->setdiscount_rule1(temp->getdiscount_rule1());
-			this->setdiscount_rule2();
-			delete temp;
 			return *this;
-		}
 		else
 		{
 			this->setname(r_product.product_name);
@@ -214,18 +196,34 @@ public:
 	{ return *this = *this - r_product; }
 };
 
-ostream &print(Product &product)
+extern const Product Empty;
+
+ostream &print(const Product &product)
 {
-	cout << "Product type:\t" << whichtype(product.product_type) << endl;
-	cout << "Product name:\t" << product.product_name << endl;
-	cout << "Product price:\t" << product.product_price << endl;
-	cout << "Product quantity:\t" << product.product_quantity << endl;
-	cout << "The discount rule of this product:\t" << product.getdiscount_rule1() << endl;
-	cout << "The discount percentage is:\t" << product.getdiscount() << endl;
+
+	string separator(81, '=');
+	int size = 20;
+	int text_length = (product.product_name).length();
+	int right_size = size - text_length / 2;
+	int left_size = size*2-text_length-right_size;
+	cout << separator << endl;
+	cout << left << setw(40) << "| Product type:" << left << setw(size) << "|" << left
+		 << setw(size) << whichtype(product.product_type) << "|" << endl;
+	cout << left << setw(40) << "| Product name:" << left << setw(right_size) << "|"
+		 << product.product_name << left << setw(left_size)<<" "<< "|" << endl;
+	cout << left << setw(40) << fixed << setprecision(2) << "| Product price:" << left << setw(size) << "|"
+		 << left << setw(size) << product.product_price << "|" << endl;
+	cout << left << setw(40) << "| Product quantity:" << left << setw(size) << "|" << left << setw(size)
+		 << product.product_quantity << "|" << endl;
+	cout << left << setw(40) << "| The discount rule of this product:" << left << setw(size) << "|"
+		 << left << setw(size) << product.getdiscount_rule1() << "|" << endl;
+	cout << left << setw(40) << fixed << setprecision(2) << "| The discount percentage is:" << left << setw(size) << "|"
+		 << left << setw(size) << product.getdiscount() << "|" << endl;
+	cout << separator << endl;
 	return cout;
 }
 
-int whichtype(string& user_choice)
+int whichtype(string &user_choice)
 {
 	if (user_choice == "CAKE" || user_choice == "CAKES") return CAKE;
 	else if (user_choice == "COOKIE" || user_choice == "COOKIES") return COOKIE;
@@ -241,6 +239,7 @@ string whichtype(int type)
 	else
 		return "WRONG TYPE";
 }
+
 #endif //PRODUCT_H
 
 

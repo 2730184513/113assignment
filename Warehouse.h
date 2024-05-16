@@ -4,10 +4,12 @@
 
 #ifndef WAREHOUSE_H
 #define WAREHOUSE_H
+
 #include "Product.h"
 #include<iostream>
 #include <string>
 #include <fstream>
+
 using namespace std;
 
 double pow(double base, int exponent);
@@ -20,7 +22,7 @@ class Warehouse
 {
 	static const int size;
 	static const int max_capacity;
-	Product** products = new Product* [max_capacity];
+	Product **const products = new Product *[max_capacity];
 public:
 	Warehouse()
 	{
@@ -28,19 +30,29 @@ public:
 			products[i] = nullptr;
 	}
 
-	Warehouse(Warehouse& wh) = delete;    //不存在所谓的复制一个仓库所以禁止这个功能
+	Warehouse(Warehouse &wh) = delete;    //不存在所谓的复制一个仓库所以禁止这个功能
 
 	~Warehouse()
-	{ delete[] products;}
+	{
+		for (int i = 0; i < max_capacity; i++)
+			delete products[i];
+		delete[] products;
+	}
 
 	//Accessors
 	static int getcapacity()
 	{ return max_capacity; }
 
-	Product** getproducts()
+	Product **getproducts()
 	{ return products; }
 
-
+	const Product &operator[](int code)
+	{
+		if (code > max_capacity || code < 0)
+			throw out_of_range("Out of range");
+		else
+			return *products[code];
+	}
 };
 
 const int Warehouse::size = pow(10, Product::getcode_length());
