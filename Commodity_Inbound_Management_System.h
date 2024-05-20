@@ -1,322 +1,166 @@
-//
-// Created by 邓初杰 on 24-5-10.
-//
-
+// Header guard to prevent multiple inclusion of the Commodity Inbound Management System header file.
 #ifndef COMMODITY_INBOUND_MANAGEMENT_SYSTEM_H
 #define COMMODITY_INBOUND_MANAGEMENT_SYSTEM_H
 
-#include "Warehouse.h"
-#include "Product_List.h"
-#include<iostream>
+#include "Warehouse.h" // Include Warehouse header file for Warehouse class definition.
+#include "Product_List.h" // Include Product_List header file for Product_List class definition.
+#include<iostream> // Include necessary header files.
 #include <string>
 #include <fstream>
 
-using namespace std;
+using namespace std; // Using the standard namespace for shorthand access to standard library entities.
 
-string toupper(const string &str);
+// Function declarations for string manipulation functions.
+string toupper(const string &str); // Function to convert string to uppercase.
+string title(const string &str); // Function to capitalize each word in a string.
 
-string tolower(const string &str);
-
-string title(const string &str);
-
-//Commodity Inbound Management System
+// Declaration of Commodity Inbound Management System (CIM_System) class.
 class CIM_System
 {
-	Product **const warehouse_accessor = nullptr;
-	int total = 0;
+	Product **const warehouse_accessor = nullptr; // Constant pointer to array of pointers to products in the warehouse.
 
+	// Static function to calculate product code based on product name.
 	static int calculate_code(const string &name)
 	{
 		int product_code = 0;
-		int warehouse_capacity = Warehouse::getcapacity();
-		for (const unsigned char c: name)
-			product_code = ((product_code << 4) ^ (product_code >> 28) ^ (int) c) % warehouse_capacity;
+		int warehouse_capacity = Warehouse::getcapacity(); // Get warehouse capacity.
+		for (const unsigned char c: name) // Iterate through each character in the name.
+			product_code = ((product_code << 4) ^ (product_code >> 28) ^ (int) c) %
+						   warehouse_capacity; // Calculate product code.
 		return product_code;
 	}
 
 public:
-	CIM_System() = delete;    //必须要与一个仓库进行匹配
+	// Constructor for CIM_System class (deleted default constructor).
+	CIM_System() = delete;    // An instance must be associated with a warehouse.
 
-	explicit CIM_System(Warehouse &warehouse) : warehouse_accessor(warehouse.getproducts())
+	// Constructor with Warehouse parameter.
+	explicit CIM_System(Warehouse &warehouse)
+			: warehouse_accessor(warehouse.getproducts()) // Initialize warehouse accessor.
 	{}
 
+	// Destructor for CIM_System class.
 	~CIM_System() = default;
 
+	// Function to add a product to the warehouse.
 	State inbound(const Product &product);
 
+	// Function to add products from a file to the warehouse.
 	State inbound(ifstream &product_list);
 
-	void inbound(istream &user_input);
-
-	void inbound(Product_List &product_list);
-
-	int update_total();
-
-	int gettotal()
-	{
-		update_total();
-		return total;
-	}
+	// Function to add products from a product list to the warehouse.
+	State inbound(Product_List &product_list);
 };
 
+// Function definition to add a product to the warehouse.
 State CIM_System::inbound(const Product &product)
 {
-	int position = calculate_code(product.getname());
-	if (warehouse_accessor[position] == nullptr)
+	int position = calculate_code(product.getname()); // Calculate position in the warehouse based on product name.
+	if (warehouse_accessor[position] == nullptr) // If position is empty.
 	{
-		warehouse_accessor[position] = new Product(product);
-		warehouse_accessor[position]->setproduct_code(position);
-		total++;
-		return SUCCESS;
+		warehouse_accessor[position] = new Product(product); // Add product to the warehouse.
+		warehouse_accessor[position]->setproduct_code(position); // Set product code.
+		return SUCCESS; // Return success state.
 	}
 	else
 	{
-		if (*warehouse_accessor[position] == product)
+		if (*warehouse_accessor[position] == product) // If product already exists in the warehouse.
 		{
-			*warehouse_accessor[position] += product;
-			return SUCCESS;
+			*warehouse_accessor[position] += product; // Add quantity to existing product.
+			return SUCCESS; // Return success state.
 		}
 		else
 		{
-			int flag = 1;
-			for (int step = 1; step < INT_MAX; step++)
+			int flag = 1; // Flag to track number of attempts.
+			for (int step = 1; step < INT_MAX; step++) // Iterate until INT_MAX steps.
 			{
-				position = (position + step * step) % Warehouse::getcapacity();
-				flag++;
-				if (warehouse_accessor[position] == nullptr)
+				position = (position + step * step) % Warehouse::getcapacity(); // Calculate new position.
+				flag++; // Increment flag.
+				if (warehouse_accessor[position] == nullptr) // If new position is empty.
 				{
-					warehouse_accessor[position] = new Product(product);
-					break;
+					warehouse_accessor[position] = new Product(product); // Add product to the warehouse.
+					warehouse_accessor[position]->setproduct_code(position); // Set product code.
+					break; // Exit loop.
 				}
 			}
-			if (flag == INT_MAX)
-				return FAILED;
+			if (flag == INT_MAX) // If maximum attempts reached.
+				return FAILED; // Return failed state.
 			else
-			{
-				total++;
-				return SUCCESS;
-			}
+				return SUCCESS; // Return success state.
 		}
 	}
 }
 
+// Function to add products from a file to the warehouse.
 State CIM_System::inbound(ifstream &product_list)
 {
-	Product *temp;
-	while (!product_list.eof())
+	Product *temp; // Temporary product pointer.
+	while (!product_list.eof()) // Loop until end of file.
 	{
-		//The content of products is something like this.
-		// product_name\t product_type\t product_price\t product_quantity\t discount_rule1\t discount_percentage
+		// Read product details from file.
 		string name;
 		bool type;
 		float price, discount_percentage;
 		int quantity, discount_rule1;
-		product_list >> name >> type >> price >> quantity >> discount_rule1 >> discount_percentage;
-		temp = new Product(name, type, price, quantity, discount_rule1, discount_percentage);
-		inbound(*temp);
-	}
-	delete temp;
-	if (product_list.fail())
-		return FAILED;
-	else
-		return SUCCESS;
-}
-
-//void CIM_System::inbound(istream& user_input)
-//{
-//	string user_choice;
-//	do
-//	{
-//		Product* temp;
-//		string name;
-//		bool type;
-//		float price, discount_percentage;
-//		int quantity, discount_rule1;
-//		cout << "Please choose the type of the product you want to add (CAKE or COOKIE):\t";
-//		user_input >> user_choice;
-//		user_choice = toupper(user_choice);
-//		while (whichtype(user_choice) == WRONG_TYPE)
-//		{
-//			system("cls");
-//			cout << "You have entered a wrong type, please choose again:\t";
-//			user_input >> user_choice;
-//		}
-//		type = whichtype(user_choice);
-//		system("cls");
-//		cout << "Please enter the name of the product you want to add:\t";
-//		getchar();
-//		getline(user_input, name);
-//		name = title(name);
-//		system("cls");
-//		cout << "Please enter its price:\t";
-//		user_input >> price;
-//		while (user_input.fail() || price <= 0)
-//		{
-//			user_input.clear();
-//			user_input.ignore(INT_MAX, '\n');
-//			system("cls");
-//			cout << "You have entered a wrong value for price, pleas enter again:\t";
-//			user_input >> price;
-//		}
-//		system("cls");
-//		cout << "Please enter its quantity:\t";
-//		user_input >> quantity;
-//		while (user_input.fail() || quantity <= 0)
-//		{
-//			user_input.clear();
-//			user_input.ignore(INT_MAX, '\n');
-//			system("cls");
-//			cout << "You have entered a wrong value for quantity, pleas enter again:\t";
-//			user_input >> quantity;
-//		}
-//		system("cls");
-//		cout << "Please enter its discount rule.\n";
-//		cout << "If it doesn't have discount rule, please enter 0.\n";
-//		cout << "The discount rule:\t";
-//		user_input >> discount_rule1;
-//		while (user_input.fail() || discount_rule1 < 0)
-//		{
-//			user_input.clear();
-//			user_input.ignore(INT_MAX, '\n');
-//			system("cls");
-//			cout << "You have entered a wrong value for discount rule, pleas enter again:\t";
-//			user_input >> discount_rule1;
-//		}
-//		if (discount_rule1 == 0)
-//		{
-//			discount_rule1 = INT_MAX;
-//			discount_percentage = 0;
-//		}
-//		else
-//		{
-//			system("cls");
-//			cout << "Please enter its discount percentage(between 0 and 1):\t";
-//			user_input >> discount_percentage;
-//			while (user_input.fail() || !(0 < discount_percentage && discount_percentage < 1))
-//			{
-//				user_input.clear();
-//				user_input.ignore(INT_MAX, '\n');
-//				system("cls");
-//				cout << "You have entered a wrong value for discount percentage, pleas enter again:\t";
-//				user_input >> discount_percentage;
-//			}
-//		}
-//		temp = new Product(name, type, price, quantity, discount_rule1, discount_percentage);
-//		system("cls");
-//		cout << "Here is the information of the product you want to add. Please check whether it is correct or not.\n";
-//		print(*temp);
-//		cout << "If correct enter Y, if not enter N:\t";
-//		getchar();
-//		getline(user_input, user_choice);
-//		user_choice = toupper(user_choice);
-//		while (user_choice != "Y" && user_choice != "N")
-//		{
-//			system("cls");
-//			cout << user_choice;
-//			cout << "You have entered a wrong choice, please enter again:\t";
-//			getline(user_input, user_choice);
-//		}
-//		if (user_choice == "Y")
-//		{
-//			cout << "This product has been successfully added into warehouse." << endl;
-//
-//			temp = nullptr;
-//			delete temp;
-//		}
-//		else
-//		{
-//			delete temp;
-//			cout << "The information of the product that you entered has been cleared" << endl;
-//		}
-//
-//		cout << "Do you want to add again?" << endl;
-//		cout << "Enter Y to add again or enter N to quit:\t";
-//		getline(user_input, user_choice);
-//		user_choice = toupper(user_choice);
-//		while (user_choice != "Y" && user_choice != "N")
-//		{
-//			system("cls");
-//			cout << "You have entered a wrong choice, please enter again:\t";
-//			getline(user_input, user_choice);
-//		}
-//		user_choice = toupper(user_choice);
-//		if (user_choice == "N")
-//		{
-//			system("cls");
-//			cout << "Thank you for use." << endl;
-//		}
-//		else system("cls");
-//	} while (user_choice != "N");
-//}
-
-void CIM_System::inbound(Product_List &product_list)
-{
-	int size = product_list.gettotal();
-	for (int i = 0; i < size; i++)
-		inbound(*product_list[i]);
-}
-
-int CIM_System::update_total()
-{
-	int original_total = total;
-	int count = total;
-	for (int i = 0; i < Warehouse::getcapacity(); i++)
-	{
-
-		if (count == 0)
-			break;
-		if (warehouse_accessor[i] != nullptr)
+		getline(product_list, name, '\t'); // Read name.
+		name = title(name); // Capitalize name.
+		product_list >> type >> price >> quantity >> discount_rule1 >> discount_percentage; // Read other details.
+		product_list.get(); // Consume newline character.
+		temp = new Product(name, type, price, quantity, discount_rule1, discount_percentage); // Create product object.
+		State state = inbound(*temp); // Add product to the warehouse.
+		if (state == FAILED) // If addition failed.
 		{
-			count--;
-			if (warehouse_accessor[i]->getquantity() == SELLOUT)
-				total--;
+			delete temp; // Delete temporary product.
+			return FAILED; // Return failed state.
 		}
 	}
-	int updated_total = total;
-	return original_total - updated_total;
+	delete temp; // Delete temporary product.
+	return SUCCESS; // Return success state.
 }
 
+State CIM_System::inbound(Product_List &product_list)
+{
+	int size = product_list.gettotal();
+	State state;
+	for (int i = 0; i < size; i++)
+		state = inbound(*product_list[i]);
+	return state;
+}
+
+// Function to convert string to uppercase.
 string toupper(const string &str)
 {
 	string uppered_str = str;
 	for (char &c: uppered_str)
 	{
-		if (c >= 'a' && c <= 'z')
-			c = c - 'a' + 'A';
+		if (c >= 'a' && c <= 'z') // If character is lowercase.
+			c = c - 'a' + 'A'; // Convert to uppercase.
 	}
-	return uppered_str;
+	return uppered_str; // Return uppercase string.
 }
 
-string tolower(const string &str)
-{
-	string lowered_str = str;
-	for (char &c: lowered_str)
-	{
-		if (c >= 'A' && c <= 'Z')
-			c = c - 'A' + 'a';
-	}
-	return lowered_str;
-}
 
+// Function to capitalize each word in a string.
 string title(const string &str)
 {
 	string capitalized_str = str;
-	bool firstletter = true;
+	bool firstletter = true; // Flag to indicate first letter of a word.
 	for (char &c: capitalized_str)
 	{
 		if (firstletter)
 		{
-			c = toupper(c);
-			firstletter = false;
+			c = toupper(c); // Capitalize first letter.
+			firstletter = false; // Reset flag.
 		}
 		else
 		{
-			c = tolower(c);
-			if (c == ' ' || c == '_')
-				firstletter = true;
+			c = tolower(c); // Convert other letters to lowercase.
+			if (c == ' ' || c == '_') // If space or underscore encountered.
+				firstletter = true; // Set flag for next word.
 		}
 	}
-	return capitalized_str;
+	return capitalized_str; // Return capitalized string.
 }
 
 #endif //COMMODITY_INBOUND_MANAGEMENT_SYSTEM_H
+

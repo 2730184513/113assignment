@@ -1,7 +1,3 @@
-//
-// Created by dengchujie on 24-5-16.
-//
-
 #ifndef TRADE_SYSTEM_H
 #define TRADE_SYSTEM_H
 
@@ -9,68 +5,68 @@
 
 class Trade_System
 {
+	// Function to ban trading (to be implemented by derived classes)
 	virtual void ban() = 0;
 
+	// Constant for tax rate
 	static const float TAX_RATE;
 
-	static double calculate_discount1(const Product &product)
+	// Static function to calculate discount based on rule 1
+	static float calculate_discount1(const Product &product)
 	{
-		double discount = 0.0;
+		float discount = 0.0;
 		if (product.getquantity() >= product.getdiscount_rule1())
-			discount = (1 - product.getdiscount()) * product.getprice() * product.getprice();
+			discount = (1 - product.getdiscount()) * product.getprice() * product.getquantity();
 		return discount;
 	}
 
-	static double calculate_discount2(const Product &product)
+	// Static function to calculate discount based on rule 2
+	static float calculate_discount2(const Product &product)
 	{
-		double discount = 0.0;
+		float discount = 0.0;
 		if (product.getquantity() >= product.getdiscount_rule2())
 		{
-			int free = product.getquantity() / product.getdiscount_rule2();
-			discount = product.getprice() * free;
+			int type = product.gettype();
+			if(type == CAKE)// Cakes are 25% off
+				discount =0.25f*product.getprice() * product.getquantity();
+			else if (type == COOKIE) // Cookies are 20% off
+				discount =0.2f*product.getprice() * product.getquantity();
 		}
 		return discount;
 	}
 
 public:
-	static double calculate_amount(const Product &product)
+	// Static function to calculate the amount for a single product
+	static float calculate_amount(const Product &product)
 	{
 		return product.getprice() * product.getquantity();
 	}
 
-	static double calculate_total(const Product_List &product_list)
+	// Static function to calculate the total amount for a list of products
+	static float calculate_total(const Product_List &product_list)
 	{
 		int count = product_list.gettotal();
-		double total = 0.0;
+		float total = 0.0;
 		for (int i = 0; i < count; i++)
 		{
-			double amount = calculate_amount(*product_list[i]);
+			float amount = calculate_amount(*product_list[i]);
 			total += amount;
 		}
 		return total;
 	}
 
-	static double calculate_discount(const Product_List &product_list)
+	// Static function to calculate the total discount for a product
+	static float calculate_discount(const Product &product)
 	{
-		int count = product_list.gettotal();
-		double total_discount = 0.0;
-		for (int i = 0; i < count; i++)
-		{
-			double discount = max(calculate_discount1(*product_list[i]), calculate_discount2(*product_list[i]));
-			total_discount += discount;
-		}
-		return total_discount;
-	}
-
-	static double calculate_discount(const Product &product)
-	{
-		double discount = max(calculate_discount1(product), calculate_discount2(product));
+		float discount = max(calculate_discount1(product), calculate_discount2(product));
 		return discount;
 	}
 
-	static double calculate_tax(double net_total)
+	// Static function to calculate the tax based on net total
+	static float calculate_tax(float net_total)
 	{ return net_total * TAX_RATE; }
 };
 
+// Definition of the tax rate
 const float Trade_System::TAX_RATE = 0.06f;
 #endif //TRADE_SYSTEM_H

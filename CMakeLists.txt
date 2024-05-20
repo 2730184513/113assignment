@@ -7,7 +7,7 @@ add_executable(git_test main.cpp
         Discount.h
         Product.h
         State.h
-        Inventory_manager.h
+        Trade_Manager.h
         Warehouse.h
         Commodity_Inbound_Management_System.h
         Commodity_Outbound_Management_System.h
@@ -15,4 +15,5 @@ add_executable(git_test main.cpp
         Product_List.h
         Trade_System.h
         Bill.h
+        Interact_System.h
 )
